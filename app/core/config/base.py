@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     ENVIRONMENT: Environment
     LOG_LEVEL: str
 
+    API_V1_STR: str
+
     db: DbSettings
     auth: AuthSettings
 

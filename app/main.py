@@ -48,5 +48,4 @@ async def global_exception_handler(request: Request, exc: Exception):
         }
     )
 
-# L
-app.include_router(api_router, prefix="/api/v1")
+app.include_router(api_router, prefix=settings.API_V1_STR)
