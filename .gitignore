@@ -217,3 +217,6 @@ __marimo__/
 
 # Local dbs
 *.db
+
+# Ignore code workspace
+*.code-workspace

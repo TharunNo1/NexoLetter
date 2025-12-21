@@ -1,15 +1,21 @@
 from app.core.config import settings
-from app.core.database import engine
-from app.core.database import Base
+from app.core.database import engine, Base
 from app.api.v1.api import api_router
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
+# Import all database models
+import app.models
+
+def init_db():
+    print("Models registered:", Base.metadata.tables.keys())
+    Base.metadata.create_all(bind=engine)
+
 async def startup_tasks():
     print("NexoLetter: API Started")
-    Base.metadata.create_all(bind=engine)
+    init_db()
 
 async def shutdown_tasks():
     print("NexoLetter: API Stopped")
@@ -36,7 +42,6 @@ app.add_middleware(
     allow_headers=["*"],
     allow_methods=["GET", "POST", "PUT", "PATCH"]
 )
-
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):

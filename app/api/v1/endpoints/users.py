@@ -5,6 +5,10 @@ from fastapi import APIRouter
 
 router = APIRouter(prefix="/users", tags=["users"])
 
+
 @router.post("/add")
-def create_user(user: UserCreate, service: UserServiceDep) -> UserResponse:
+def create_user(
+    user: UserCreate,
+    service: UserServiceDep,
+) -> UserResponse:
     return service.create_user(user)
