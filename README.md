@@ -1,4 +1,4 @@
-# NexoLetter 📧
+# 📧 NexoLetter
 
 NexoLetter is a professional-grade, asynchronous newsletter management system built with **FastAPI**, **SQLAlchemy 2.0**, and **Pydantic v2**.  
 It is designed with scalability, clean architecture, and modern Python best practices in mind.

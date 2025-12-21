@@ -1,4 +1,5 @@
-from app.models import KafkaEvent
+from app.core.config import settings
+from app.models import ProcessedKafkaEvent
 from app.core.database import SessionLocal
 from sqlalchemy.orm.session import Session
 import uuid
@@ -18,7 +19,7 @@ class KafkaConsumer(ABC):
     def start(self):
         if self.consumer is not None:
             return
-        self.consumer_id = uuid.uuid4()
+        
         self.consumer = Consumer({
             "bootstrap.servers": self.bootstrap_servers,
             "group.id": self.group_id,
@@ -33,19 +34,21 @@ class KafkaConsumer(ABC):
         pass
 
     def _execute_safe_flow(self, message):
+        print(message)
         event_key = message.key().decode('utf-8') if message.key() else None
         if not event_key: 
             return
 
         with SessionLocal() as db:
-            if db.query(KafkaEvent).filter_by(event_key=event_key).first():
+            print(event_key)
+            if db.query(ProcessedKafkaEvent).filter_by(event_key=event_key, group_id=self.group_id).first():
                 self.consumer.commit(message)
                 return
 
             try:
                 data = json.loads(message.value().decode('utf-8'))
                 self.handle_event(db, data, event_key)
-                db.add(KafkaEvent(event_key=event_key))
+                db.add(ProcessedKafkaEvent(event_key=event_key, group_id=self.group_id))
                 db.commit()
                 self.consumer.commit(message)
             except Exception as e:
@@ -61,6 +64,8 @@ class KafkaConsumer(ABC):
     def subscribe(self, topic: str):
         if topic not in self.topics:
             self.topics.append(topic)
+            if self.consumer:
+                self.consumer.subscribe(self.topics)
     
     def run(self):
         if not self.topics:
@@ -81,3 +86,16 @@ class KafkaConsumer(ABC):
             pass
         finally:
             self.stop()
+
+## Test code
+'''
+class NexoLetterConsumer(KafkaConsumer):
+    def handle_event(self, db: Session, key: str, data: dict):
+        print(key, data, "handled")
+
+if __name__ == "__main__":
+    consumer = NexoLetterConsumer(settings.kafka.BOOTSTRAP_SERVERS,"newsletter-group")
+    consumer.start()
+    consumer.subscribe(settings.kafka.TOPIC_SEND_NEWSLETTER)
+    consumer.run()
+'''

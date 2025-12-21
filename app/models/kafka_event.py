@@ -1,16 +1,15 @@
 from app.core.database import Base
-from sqlalchemy import Column, DateTime, String, Boolean, PrimaryKeyConstraint
+from sqlalchemy import Column, DateTime, String, PrimaryKeyConstraint, func
 
-class KafkaEvent(Base):
+class ProcessedKafkaEvent(Base):
 
-    __tablename__ = "kafka_events"
+    __tablename__ = "processed_kafka_events"
 
     event_key = Column(String, nullable=False)
-    customer_id = Column(String, nullable=False)
-    
-    is_processed = Column(Boolean, default=True)
-    processed_at = Column(DateTime(timezone=True))
+    group_id = Column(String, nullable=False)
+
+    processed_at = Column(DateTime(timezone=True),server_default=func.now())
 
     __table_args__ = (
-        PrimaryKeyConstraint('event_key', 'customer_id', name='pk_event_customer'),
+        PrimaryKeyConstraint('event_key', 'group_id', name='pk_event_consumer'),
     )
