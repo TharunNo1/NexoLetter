@@ -1,7 +1,8 @@
-from app.core.config.security import AuthSettings
-from app.core.config.database import DbSettings
-from app.models.enums import Environment
-from pydantic_settings.main import BaseSettings, SettingsConfigDict
+from app.core.config.kafka_config import KafkaSettings
+from app.core.config.auth_config import AuthSettings
+from app.core.config.db_config import DbSettings
+from app.constants import Environment
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
 
@@ -12,16 +13,15 @@ class Settings(BaseSettings):
 
     db: DbSettings
     auth: AuthSettings
+    kafka: KafkaSettings
 
     @property
     def is_production(self) -> bool:
         return self.ENVIRONMENT == Environment.PRODUCTION
     
-
     model_config = SettingsConfigDict(
         env_file=".env", 
         extra="ignore",
         env_nested_delimiter="__"
     )
 
-settings = Settings()
