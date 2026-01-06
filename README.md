@@ -51,9 +51,9 @@ pip install -r requirements.txt
 
 ### 3. Configuration
 
-Create a `.env` file in the project root:
+Create a `.env` file (infer from `.env.template`) in the project root:
 
-```env
+```sample env
 # Database settings
 DB__DATABASE_URL="sqlite:///./nexoletter.db"
 DB__ECHO=True

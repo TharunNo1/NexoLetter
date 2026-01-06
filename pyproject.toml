@@ -1,0 +1,20 @@
+[project]
+name = "NexoLetter"
+version = "0.1.0"
+description = "AI based Newsletter generation with periodic deliveries."
+readme = "README.md"
+authors = [
+    {name = "Tharun Ganapathi", email = "tharunganapathi19@gmail.com"}
+]
+dependencies = [
+    "fastapi[standard]",
+    "pydantic",
+
+]
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
